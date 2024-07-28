@@ -8,22 +8,24 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        System.out.print("Enter project name: ");
-        String fileName = sc.nextLine();
-        System.out.print("Enter the minimum value: ");
-        int min = sc.nextInt();
-        System.out.print("Enter the maximum value: ");
-        int max = sc.nextInt();
-        System.out.print("Enter the quantity to generator: ");
-        int quantity = sc.nextInt();
+        System.out.println("Tier 1: Epic");
+        System.out.println("Tier 2: Rare");
+        System.out.println("Tier 1: Legendary");
+        System.out.println();
+        System.out.print("Enter the number of giftcodes to create for tier 1: ");
+        int quantityTier1 = sc.nextInt();
+        System.out.print("Enter the number of giftcodes to create for tier 2: ");
+        int quantityTier2 = sc.nextInt();
+        System.out.print("Enter the number of giftcodes to create for tier 3: ");
+        int quantityTier3 = sc.nextInt();
         try {
-            File myFile = new File("result/" + fileName.trim() + ".result.txt");
+            File myFile = new File("./result/giftcode.json");
             if (myFile.createNewFile()) {
-                System.out.println("Created project file with name " + myFile.getName());
+                System.out.println("created a file containing data for your event ");
             }
             try {
-                FileWriter myFileWriter = new FileWriter("./result/" + fileName.trim() + ".result.txt");
-                FileWriter overviewFileWriter = new FileWriter("./result/" + fileName.trim() + ".list.txt");
+                FileWriter giftcodeData = new FileWriter("./result/giftcode.json");
+                FileWriter overviewFileWriter = new FileWriter("./result/giftcode.txt");
 
                 int giftcodeLength = 12;
 
@@ -43,32 +45,58 @@ public class Main {
 
                 long startTime = System.currentTimeMillis();
 
-                overviewFileWriter.write("Giftcode list " + min + " - " + max + ":\n");
+                giftcodeData.write("{\n");
+                overviewFileWriter.write("Giftcode list:\n");
 
-                for (int i = 1; i <= quantity; i++) {
+                // Tier 1
+                overviewFileWriter.write("Tier 1:\n");
+                for (int i = 1; i <= quantityTier1; i++) {
                     String giftcode = "";
                     for (int j = 0; j < giftcodeLength; j++) {
                         double random = Math.floor(Math.random() * allowedChars.length());
                         giftcode += allowedChars.charAt((int) random);
                     }
-                    if (i == quantity) {
-                        myFileWriter.write("\t\"" + giftcode + "\": {\n\t\t\"giftcode\": \"" + giftcode + "\",\n\t\t\"min\": " + min + ",\n\t\t\"max\": " + max + "\n\t},");
+                    giftcodeData.write("\t\"" + giftcode + "\": {\n\t\t\"tier\": \"1\",\n\t\t\"giftcode\": \"" + giftcode + "\"\n\t},\n");
+                    overviewFileWriter.write("\t" + giftcode + "\n");
+                    System.out.println("Successfully exported giftcode number " + i + " of tier 1");
+                }
+                overviewFileWriter.write("Tier 2:\n");
+                for (int i = 1; i <= quantityTier2; i++) {
+                    String giftcode = "";
+                    for (int j = 0; j < giftcodeLength; j++) {
+                        double random = Math.floor(Math.random() * allowedChars.length());
+                        giftcode += allowedChars.charAt((int) random);
+                    }
+                    giftcodeData.write("\t\"" + giftcode + "\": {\n\t\t\"tier\": \"2\",\n\t\t\"giftcode\": \"" + giftcode + "\"\n\t},\n");
+                    overviewFileWriter.write("\t" + giftcode + "\n");
+                    System.out.println("Successfully exported giftcode number " + i + " of tier 2");
+                }
+                overviewFileWriter.write("Tier 3:\n");
+                for (int i = 1; i <= quantityTier3; i++) {
+                    String giftcode = "";
+                    for (int j = 0; j < giftcodeLength; j++) {
+                        double random = Math.floor(Math.random() * allowedChars.length());
+                        giftcode += allowedChars.charAt((int) random);
+                    }
+                    if (i == quantityTier3) {
+                        giftcodeData.write("\t\"" + giftcode + "\": {\n\t\t\"tier\": \"3\",\n\t\t\"giftcode\": \"" + giftcode + "\"\n\t}\n");
                         overviewFileWriter.write("\t" + giftcode);
                     }
                     else {
-                        myFileWriter.write("\t\"" + giftcode + "\": {\n\t\t\"giftcode\": \"" + giftcode + "\",\n\t\t\"min\": " + min + ",\n\t\t\"max\": " + max + "\n\t},\n");
+                        giftcodeData.write("\t\"" + giftcode + "\": {\n\t\t\"tier\": \"3\",\n\t\t\"giftcode\": \"" + giftcode + "\"\n\t},\n");
                         overviewFileWriter.write("\t" + giftcode + "\n");
                     }
-                    System.out.println("Completed export of giftcode number " + i);
+                    System.out.println("Successfully exported giftcode number " + i + " of tier 3");
                 }
-                myFileWriter.close();
+                giftcodeData.write("}");
+                giftcodeData.close();
                 overviewFileWriter.close();
 
                 long endTime = System.currentTimeMillis();
                 long elapsedTime = endTime - startTime;
 
-                System.out.println("Completed export of " + quantity + " json giftcode codes onto the path: result/" + fileName.trim() + "/json.txt");
-                System.out.println("Completed export of " + quantity + " giftcode lists onto the path: result/" + fileName.trim() + "/json.txt");
+                System.out.println("successfully exported " + (quantityTier1 + quantityTier2 + quantityTier3) + " giftcode json");
+                System.out.println("successfully exported " + (quantityTier1 + quantityTier2 + quantityTier3) + " giftcode lists");
 
                 System.out.println("Completed in: " + elapsedTime + " ms");
             } catch (IOException e) {
